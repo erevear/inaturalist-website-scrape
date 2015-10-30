@@ -18,15 +18,18 @@ db = MySQLdb.connect("localhost","root","password" )
 
 cursor = db.cursor()
 
+#set encoding to include any utf8 character
 cursor.execute("SET NAMES utf8mb4;") 
 
 cursor.execute("SET CHARACTER SET utf8mb4;")
 
 cursor.execute("SET character_set_connection=utf8mb4;")
 
+#set database to iNat_Observations
 cursor.execute('USE iNat_Observations')
-cursor.execute('DROP TABLE IF EXISTS OBSERVATIONS')
 
+#if the table already exists, drop it and create new one with given fields
+cursor.execute('DROP TABLE IF EXISTS OBSERVATIONS')
 create_table = """CREATE TABLE IF NOT EXISTS OBSERVATIONS (
          SPECIES  CHAR(200) NOT NULL,
          OBSERVER CHAR(200) NOT NULL,
@@ -38,11 +41,12 @@ cursor.execute(create_table)
 
 
 
-
+#also write to cvs
 file = codecs.open("inat2.csv", "wb", "utf-8")
 file.write( "Species,Observer,Date,Location,,\n");
 
-
+#for all first 100 pages take in the species, observer username, date and location
+#write all to a database and a file and print to console
 while j < 100:
 	url = 'http://inaturalist.org/observations.json?page=%d'%j
 	print url
